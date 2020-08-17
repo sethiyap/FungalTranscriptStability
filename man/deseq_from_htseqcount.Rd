@@ -19,15 +19,15 @@ deseq_from_htseqcount(
 each sample (a HTSeqCount output)}
 
 \item{pattern}{string, pattern of files to be selected as input from the dir.
-For example `pattern="*._HTSeqCount.txt`
-  The pattern is also used to replace the pattern name from file, which is
-  used as column names in further processing. The pattern replaced column
-  names should match with first column of metadata file.}
+For example \verb{pattern="*._HTSeqCount.txt}
+The pattern is also used to replace the pattern name from file, which is
+used as column names in further processing. The pattern replaced column
+names should match with first column of metadata file.}
 
 \item{metadata_file}{string, absolute path of metadata file in tab-delimited
-  format. metadata file should contain two columns, First: names of the
-  samples exactly matching with the pattern replaced file names. Second:
-  sample type i.e. treated or untreated
+format. metadata file should contain two columns, First: names of the
+samples exactly matching with the pattern replaced file names. Second:
+sample type i.e. treated or untreated
 sample1_set1    treated}
 
 \item{HTSeqOutput}{logical, whether the read count files are HTSeq-count
@@ -45,12 +45,12 @@ the threshold in all samples from further processing, Default: 2}
 }
 \value{
 combined count matrix of all samples, log2 correlation plot and
-  expression matrix
+expression matrix
 }
 \description{
 Computes normalized gene expression value and differential gene
-  expression using DESeq2 from read counts matrix obtained from HTSeqCount or
-  any other method.
+expression using DESeq2 from read counts matrix obtained from HTSeqCount or
+any other method.
 }
 \details{
 DETAILS

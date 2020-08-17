@@ -43,7 +43,7 @@ a correlation plot and tpm matrix of input files.
 }
 \description{
 TPM can be calculated from count matrix. Count matrix can be
-  output of htseq-count or prepDE in Hisat2-Stringtie pipeline.
+output of htseq-count or prepDE in Hisat2-Stringtie pipeline.
 }
 \details{
 DETAILS

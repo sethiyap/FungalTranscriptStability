@@ -31,11 +31,11 @@ c(-0.75, 0, 0.75)}
 }
 \value{
 quantile analysis plot, heatmap and tibble containing stable and
-  unstable genes.
+unstable genes.
 }
 \description{
 Stability of lowly or non-transcribing genes is determined by
-  comparing RNAP II occupancy levels and steady state mRNA levels
+comparing RNAP II occupancy levels and steady state mRNA levels
 }
 \examples{
 \dontrun{

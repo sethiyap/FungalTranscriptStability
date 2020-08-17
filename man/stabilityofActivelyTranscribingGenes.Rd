@@ -28,16 +28,16 @@ name of output file. Default: 'sample'}
 }
 \value{
 A tibble of stable and unstable genes determined from mRNA and RNAP
-  II values.
+II values.
 }
 \description{
 Stability of actively transcribed genes (i.e. belonging to top
-  10-15 percent of total genes by RNA polymerase II) is determined by comparing RNAP
-  II occupancy levels and steady state mRNA levels.
+10-15 percent of total genes by RNA polymerase II) is determined by comparing RNAP
+II occupancy levels and steady state mRNA levels.
 }
 \details{
 mRNA levels should be normalized to gene lengths as mRNA values of
-  genes within the given condition are considered to determine stability.
+genes within the given condition are considered to determine stability.
 }
 \examples{
 \dontrun{
