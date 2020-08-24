@@ -37,10 +37,13 @@ orf_len_distribution <- function(gff, genelist_stabilityInfo){
     gene_width <- dplyr::left_join(genelist_stabilityInfo, cds_len) %>%
                   dplyr::mutate(stability=forcats::as_factor(stability))
 
+
+    print(gene_width)
   # calculate median length
   median = gene_width %>%
-            dplyr::group_by(stability) %>%
-            dplyr::summarize(med = median(cds_len))
+            dplyr::group_by(stability, condition) %>%
+            dplyr::summarize(med = median(cds_len)) %>%
+            tidyr::spread(stability,med)
 
   print(median)
 
@@ -66,12 +69,18 @@ orf_len_distribution <- function(gff, genelist_stabilityInfo){
     )
   print(gg)
 
+  var1 <- unique(gene_width$stability %>% levels() %>% .[1])
+  var2 <- unique(gene_width$stability %>% levels() %>% .[2])
+
+  var1 <- rlang::sym(var1)
+  var2 <- rlang::sym(var2)
+
   t_test <- gene_width %>%
     dplyr::group_by(stability, condition) %>%
     tidyr::nest() %>%
     tidyr::spread(key = stability, value = data) %>%
     dplyr::mutate(
-      t_test = purrr::map2(.[[2]], .[[3]], ~ t.test(.x$cds_len, .y$cds_len) %>% broom::tidy())) %>%
+      t_test = purrr::map2(!!var1,!!var2, ~ t.test(.x$cds_len, .y$cds_len) %>% broom::tidy())) %>%
     dplyr::mutate(pval = purrr::map_dbl(t_test , ~ .$`p.value`)) %>%
     dplyr::select(condition, pval)
 

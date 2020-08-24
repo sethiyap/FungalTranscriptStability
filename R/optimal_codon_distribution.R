@@ -7,9 +7,10 @@
 #'   First_column: gene_id, second_column: stability ie. whether the gene is
 #'   stable or unstable, third_column: condition ie. stressed or unstressed
 #' @param ref_sequence_file path or connection of coding nucleotides sequences
-#'   fasta file. The number of sequences should be equal to number of genes in
+#'   fasta file. The fasta should contain all the sequences for genes in
 #'   genelist_stabilityInfo tibble. Sequences can be subsetted from all genes
-#'   sequences using fastaR::fa_some_records() function.
+#'   sequences using fastaR::fa_some_records() function or genome-wide sequences
+#'   can be provided.
 #' @return a tibble of optimal codon percentage for each gene, boxplot of codon
 #'   distribution in different class or stability of genes.
 #' @examples
@@ -57,7 +58,8 @@ optimal_codon_distribution <- function(optimal_codon_table,genelist_stabilityInf
     dplyr::select(c(gene_id, total, optimal, percent)) %>%
     unique()
 
-  combine_stability <- dplyr::left_join(codon_calci, genelist_stabilityInfo)
+  combine_stability <- dplyr::left_join(genelist_stabilityInfo, codon_calci) %>%
+                          dplyr::mutate(stability=forcats::as_factor(stability))
 
   if(any(is.na(combine_stability))){
 
@@ -90,13 +92,20 @@ optimal_codon_distribution <- function(optimal_codon_table,genelist_stabilityInf
   print(gp)
 
   # compute p-value
+
+  var1 <- unique(combine_stability$stability %>% levels() %>% .[1])
+  var2 <- unique(combine_stability$stability %>% levels() %>% .[2])
+
+  var1 <- rlang::sym(var1)
+  var2 <- rlang::sym(var2)
+
   t_test <- combine_stability %>%
     dplyr::select(c(stability, condition, percent)) %>%
     dplyr::group_by(stability, condition) %>%
     tidyr::nest() %>%
     tidyr::spread(key = stability, value = data) %>%
     dplyr::mutate(
-      t_test = purrr::map2(.[[2]], .[[3]], ~ t.test(.x$percent, .y$percent) %>% broom::tidy())) %>%
+      t_test = purrr::map2(!!var1, !!var2, ~ t.test(.x$percent, .y$percent) %>% broom::tidy())) %>%
     dplyr::mutate(pval = purrr::map_dbl(t_test , ~ .$`p.value`)) %>%
     dplyr::select(condition, pval)
 

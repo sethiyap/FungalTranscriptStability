@@ -23,7 +23,7 @@ genes, i.e. to consider top 10 or top 15percent genes. Default: 15}
 \item{write_output}{logical, to write output in text file or not. Default:
 FALSE}
 
-\item{output_name}{character, if \code {write_output=TRUE} then determine the
+\item{output_name}{character, if \code{write_output=TRUE} then determine the
 name of output file. Default: 'sample'}
 }
 \value{

@@ -19,9 +19,10 @@ First_column: gene_id, second_column: stability ie. whether the gene is
 stable or unstable, third_column: condition ie. stressed or unstressed}
 
 \item{ref_sequence_file}{path or connection of coding nucleotides sequences
-fasta file. The number of sequences should be equal to number of genes in
+fasta file. The fasta should contain all the sequences for genes in
 genelist_stabilityInfo tibble. Sequences can be subsetted from all genes
-sequences using fastaR::fa_some_records() function.}
+sequences using fastaR::fa_some_records() function or genome-wide sequences
+can be provided.}
 }
 \value{
 a tibble of optimal codon percentage for each gene, boxplot of codon

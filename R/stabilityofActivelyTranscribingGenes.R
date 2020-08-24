@@ -9,7 +9,7 @@
 #'   genes, i.e. to consider top 10 or top 15percent genes. Default: 15
 #' @param write_output logical, to write output in text file or not. Default:
 #'   FALSE
-#' @param output_name character, if \code {write_output=TRUE} then determine the
+#' @param output_name character, if \code{write_output=TRUE} then determine the
 #'   name of output file. Default: 'sample'
 #' @return A tibble of stable and unstable genes determined from mRNA and RNAP
 #'   II values.
