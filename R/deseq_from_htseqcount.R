@@ -25,7 +25,9 @@
 #'   mitochrondrial rRNA in C. glabrata. Default:NULL
 #' @param minimum_read_cutoff numeric, remove genes containing reads less than
 #'   the threshold in all samples from further processing, Default: 2
-#' @param outfile string, name of the output file
+#' @param write_output logical, whether to return output on console or write in
+#'   a file. If true, output file is generated. Default: FALSE
+#' @param outfile string, name or path of output file name.
 #' @return combined count matrix of all samples, log2 correlation plot and
 #'   expression matrix
 #' @details DETAILS
@@ -45,26 +47,26 @@
 #' @examples
 #' \dontrun{
 #' if(interactive()){
-#'  dir = (".")
-#'  pattern="_12.*_HTSeqCount.txt"
-#'  metadata = system.file("exdata", "metadata.txt", package = "FungalTranscriptStability")
+#'  dir <- system.file(file.path('extdata'), package='FungalTranscriptStability')
+#'  pattern="_S.*_HTSeqCount.txt"
+#'  metadata <- system.file(file.path('extdata', 'metadata.txt'), package='FungalTranscriptStability')
 #'  deseq_from_htseqcount(dir = dir, pattern = pattern, metadata_file = metadata_file, drop_genes = "CaglfM*", outfile = "ROS")
 #'  }
 #' }
 #'
-deseq_from_htseqcount <- function(dir, pattern, metadata_file,HTSeqOutput=TRUE,drop_genes=NULL, minimum_read_cutoff=2, outfile) {
+deseq_from_htseqcount <- function(dir, pattern, metadata_file,HTSeqOutput=TRUE,drop_genes=NULL, minimum_read_cutoff=2,write_output=FALSE, outfile) {
 
           #--- Load DESeq2 files
           dd <- list.files(path = dir,
                            pattern=pattern,
-                           full.names = F)
+                           full.names = T)
           print(dd)
 
           #--- get count matrix
           df_count_matrix <- tibble::tibble(file_name = dd) %>%
                     dplyr::mutate(file_cont = purrr::map(file_name,data.table::fread,data.table = F))  %>%
                     tidyr::unnest(cols = c(file_cont), names_repair="universal") %>%
-                    dplyr::mutate(file_name = gsub(pattern=pattern,replacement="",file_name))  %>%
+                    dplyr::mutate(file_name =gsub(pattern=pattern,replacement="", basename(file_name)))  %>%
                     tidyr::spread(key = file_name , value = V2)
 
           print(colnames(df_count_matrix))
@@ -83,8 +85,7 @@ deseq_from_htseqcount <- function(dir, pattern, metadata_file,HTSeqOutput=TRUE,d
                                         dplyr::filter(!stringr::str_detect(V1, drop_genes))
           }
 
-          #--- write count matrix in a file
-          readr::write_delim(df_count_matrix, paste(outfile, "_count_matrix.tab", sep=""),col_names = TRUE,delim="\t")
+
 
           #--- filter genes if read count is less than 10 in all columns
           df_count_matrix_filtered <- df_count_matrix %>%
@@ -162,9 +163,7 @@ deseq_from_htseqcount <- function(dir, pattern, metadata_file,HTSeqOutput=TRUE,d
                           axis.text.y = ggplot2::element_text(size = 10),
                           panel.grid = ggplot2::element_blank())
 
-          png(paste(outfile, "_correlation1_plot.png", sep=""),width = nrow(condition)*100, height = nrow(condition)*100, units = "px", pointsize = 12)
-          print(gg )
-          dev.off()
+
           #--- corrplot
           rcorr = cor(as.matrix(log2(deseq_matrix+1)))
           gc <- GGally::ggcorr(log2(deseq_matrix+1),label=TRUE,label_size = 8, hjust = 0.75,
@@ -173,16 +172,33 @@ deseq_from_htseqcount <- function(dir, pattern, metadata_file,HTSeqOutput=TRUE,d
                                label_round = 2,
                                layout.exp = 1)
 
-          pdf(paste(outfile, "_correlation2_plot.pdf", sep=""),width = 12, height = 12)
-          print(gc)
-          dev.off()
+
 
           print(gc)
 
-          #--- write deseq output
-          up_deg <- subset(resdata, resdata$log2FoldChange> 0.6 & pvalue <= 0.05)
-          down_deg <- subset(resdata, resdata$log2FoldChange< -0.6 & pvalue <= 0.05)
 
-          writexl::write_xlsx(list(deseq_out=resdata,up=up_deg, down=down_deg),path = paste(outfile, "_deseq_output.xlsx", sep=""),col_names = T)
+          if(write_output==TRUE){
+
+            #--- write count matrix in a file
+            readr::write_delim(df_count_matrix, paste(outfile, "_count_matrix.tab", sep=""),col_names = TRUE,delim="\t")
+
+            # correlation plot
+            pdf(paste(outfile, "_correlation2_plot.pdf", sep=""),width = 12, height = 12)
+            print(gc)
+            dev.off()
+
+            png(paste(outfile, "_correlation1_plot.png", sep=""),width = nrow(condition)*100, height = nrow(condition)*100, units = "px", pointsize = 12)
+            print(gg )
+            dev.off()
+
+            # DEG output
+            up_deg <- subset(resdata, resdata$log2FoldChange> 0.6 & pvalue <= 0.05)
+            down_deg <- subset(resdata, resdata$log2FoldChange< -0.6 & pvalue <= 0.05)
+            writexl::write_xlsx(list(deseq_out=resdata,up=up_deg, down=down_deg),path = paste(outfile, "_deseq_output.xlsx", sep=""),col_names = T)
+
+            }else{
+            return(resdata)
+          }
+
 }
 

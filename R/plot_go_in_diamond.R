@@ -22,28 +22,53 @@
 
 plot_go_in_diamond <- function(data_tbl){
 
-          colnames(data_tbl) <- c("term", "percent_over_bkgd", "pvalue", "type", "class")
+          if(ncol(data_tbl)==6){
 
-          print(head(data_tbl))
+            colnames(data_tbl) <- c("term", "percent_over_bkgd", "pvalue", "type", "class", "box")
 
-          data_fct <- data_tbl %>%
-                      dplyr::mutate(term=forcats::as_factor(term),
-                                    type=forcats::as_factor(type),
-                                    class=forcats::as_factor(class))
+            print(head(data_tbl))
 
-  gg <-  data_fct %>%
-          ggplot2::ggplot(ggplot2::aes(y=term, x=type,ordered=TRUE))+
-          ggplot2::labs(x="", y="")+
-          ggplot2::facet_grid( ggplot2::vars(class), space="free", scales = "free")+
-          ggplot2::geom_point(ggplot2::aes(size=percent_over_bkgd),color="black",shape=23, stroke=0.8)+
-          ggplot2::geom_point(ggplot2::aes(size=percent_over_bkgd,alpha=-log10(pvalue), fill=type),shape=23)+
-          ggplot2::scale_size(range = c(1,15))+
-          ggplot2::scale_fill_manual(values=c("#FC4E07", "#00AFBB" ))+
-          ggplot2::theme_bw()+
-          ggplot2::scale_x_discrete(position="top")+
-          ggplot2::scale_y_discrete(position="right")+
-          ggplot2::guides(fill = ggplot2::guide_legend(title="",override.aes = list(size=8)),
-           alpha=ggplot2::guide_legend(override.aes=list(size=5)))
+            data_fct <- data_tbl %>%
+              dplyr::mutate(term=forcats::as_factor(term),
+                            #type=forcats::as_factor(type),
+                            class=forcats::as_factor(class),
+                            box=forcats::as_factor(box))
+
+            gg <-  data_fct %>%
+              ggplot2::ggplot(ggplot2::aes(y=term, x=type,ordered=TRUE))+
+              ggplot2::labs(x="", y="")+
+              ggplot2::facet_grid( ggplot2::vars(box),ggplot2::vars(class), space="free", scales = "free", switch="y")+
+              ggplot2::geom_point(ggplot2::aes(size=percent_over_bkgd),color="black",shape=23, stroke=0.8)+
+              ggplot2::geom_point(ggplot2::aes(size=percent_over_bkgd,alpha=-log10(pvalue), fill=type),shape=23)+
+              ggplot2::scale_size(range = c(1,15))+
+              ggplot2::scale_fill_manual(values=c("#FC4E07", "#00AFBB" ))+
+              ggplot2::theme_bw()+
+              ggplot2::scale_x_discrete(position="top")+
+              ggplot2::scale_y_discrete(position="right")+
+              ggplot2::guides(fill = ggplot2::guide_legend(title="",override.aes = list(size=8)),
+                              alpha=ggplot2::guide_legend(override.aes=list(size=5)))
+
+          }else if(ncol(data_tbl)==4){
+
+            colnames(data_tbl) <- c("term", "percent_over_bkgd", "pvalue", "cluster")
+            data_fct <- data_tbl %>%
+                        dplyr::mutate(term=forcats::as_factor(term))
+
+            gg <-  data_fct %>%
+              ggplot2::ggplot(ggplot2::aes(y=term, x=cluster,ordered=TRUE))+
+              ggplot2::labs(x="", y="")+
+              ggplot2::geom_point(ggplot2::aes(size=percent_over_bkgd),color="black",shape=23, stroke=0.8)+
+              ggplot2::geom_point(ggplot2::aes(size=percent_over_bkgd,alpha=-log10(pvalue), fill=cluster),shape=23)+
+              ggplot2::scale_size(range = c(1,15))+
+              ggplot2::scale_y_discrete(position="right")+
+              ggplot2::scale_fill_manual(values=c("#FC4E07", "brown","blue3" ))+
+              ggplot2::theme_bw()+
+              ggplot2::guides(fill = ggplot2::guide_legend(title="",override.aes = list(size=8)),
+                              alpha=ggplot2::guide_legend(override.aes=list(size=5)))
+
+          }else{
+            message("Number of columns does not match the requirement")
+          }
 
   return(gg)
 

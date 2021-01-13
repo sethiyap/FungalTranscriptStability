@@ -46,7 +46,12 @@ tpm_from_htseqcount <- function(dir, pattern, gff_file, HTSeqOutput=TRUE, drop_g
   dd <- list.files(path = dir,
                    pattern=pattern,
                    full.names = T)
-  print(dd)
+
+  if(length(dd)==0L){
+    warning("file name or pattern not correct")
+  }else{
+    print(dd)
+  }
 
   #--- get count matrix
   df_count_matrix <- tibble::tibble(file_name = dd) %>%

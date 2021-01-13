@@ -8,6 +8,8 @@ plot_heatmap(
   dat_mat,
   color_key = c(-1, 0, 1),
   top_annotation = TRUE,
+  key_name = "expression_level",
+  show_row_names = FALSE,
   additional_column = NULL,
   additional_column_key = c(-8, 0, 8)
 )

@@ -21,7 +21,7 @@
 #' @importFrom grid unit gpar
 #' @importFrom dplyr summarise_if
 #' @importFrom circlize colorRamp2
-plot_heatmap <- function(dat_mat,color_key=c(-1,0,1), top_annotation=TRUE,additional_column=NULL, additional_column_key=c(-8,0,8)){
+plot_heatmap <- function(dat_mat,color_key=c(-1,0,1), top_annotation=TRUE,key_name="expression_level",show_row_names=FALSE,additional_column=NULL, additional_column_key=c(-8,0,8)){
 
   if(top_annotation==TRUE){
   ha = ComplexHeatmap::HeatmapAnnotation(value =
@@ -43,16 +43,16 @@ plot_heatmap <- function(dat_mat,color_key=c(-1,0,1), top_annotation=TRUE,additi
   if(min_dat < 0){
               col <- circlize::colorRamp2(color_key,col=c("#008837","#f7f7f7","#d01c8b"))
   }else{
-              col <- circlize::colorRamp2(color_key,col=c("white","pink","red"))
+              col <- circlize::colorRamp2(color_key,col=c("#ffeda0","#feb24c","#bd0026"))
   }
 
   ht1 <- ComplexHeatmap::Heatmap(dat_mat,
-                                 name=("expression level"),
+                                 name=(key_name),
                                  border = "black",
                                  col=col,
                                  top_annotation = ha,
                                  show_row_dend = FALSE,
-                                 show_row_names = FALSE,
+                                 show_row_names = show_row_names,
                                  cluster_columns = FALSE,
                                  cluster_rows = TRUE,
                                  column_names_rot=0,

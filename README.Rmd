@@ -1,0 +1,50 @@
+---
+output: github_document
+always_allow_html: yes
+---
+
+# FungalTranscriptStability
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "50%"
+)
+```
+
+```{r , message=FALSE, echo=FALSE}
+library(magrittr)
+```
+
+FungalTranscriptStability, is an R-package determining mRNA stability by integration of RNASeq and RNAPII occupancy values. Detailed workflow of how to process raw-data and analyze the transcript stability results is described here;
+
+1. TPM from count matrix
+A count matrix generated for RNASeq data using standard RNASeq data analysis platforms like `HTSeq-count` or `StringTie` are used as an input to obtain within condition normalized values i.e. TPM
+
+```{r eval=TRUE, collapse=TRUE, fig.align='center', fig.height=4, fig.width=4}
+
+dir <- system.file(file.path('extdata'),package='FungalTranscriptStability')
+pattern="_S.*_HTSeqCount.txt"
+gff_file <- system.file(file.path('extdata', 'C_glabrata_CBS138_version_s02-m07-r38_features.gff'), package='FungalTranscriptStability')
+tpm_out <- FungalTranscriptStability::tpm_from_htseqcount(dir = dir, pattern = pattern,gff_file=gff_file, HTSeqOutput = TRUE, write_output = FALSE, drop_genes = "CaglfM*" )
+head(tpm_out)
+
+```
+
+2. DESeq output from count matrix
+
+A count matrix of RNASeq data using standard RNASeq data analysis platforms like `HTSeq-count` or `StringTie` are used as an input to obtain normalized values across different conditions and libraries using DESeq2.
+
+```{r eval=TRUE, collapse=TRUE, fig.align='center', fig.height=4, fig.width=4}
+dir <- system.file(file.path('extdata'),package='FungalTranscriptStability')
+pattern="_S.*_HTSeqCount.txt"
+metadata <- system.file(file.path('extdata', 'metadata.txt'), package='FungalTranscriptStability')
+de_out <- FungalTranscriptStability::deseq_from_htseqcount(dir = dir, pattern = pattern, metadata_file = metadata, drop_genes = "CaglfM*", write_output = FALSE)
+
+head(de_out)
+
+```
+
+### More updates coming soon...

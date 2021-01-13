@@ -11,6 +11,7 @@ deseq_from_htseqcount(
   HTSeqOutput = TRUE,
   drop_genes = NULL,
   minimum_read_cutoff = 2,
+  write_output = FALSE,
   outfile
 )
 }
@@ -41,7 +42,10 @@ mitochrondrial rRNA in C. glabrata. Default:NULL}
 \item{minimum_read_cutoff}{numeric, remove genes containing reads less than
 the threshold in all samples from further processing, Default: 2}
 
-\item{outfile}{string, name of the output file}
+\item{write_output}{logical, whether to return output on console or write in
+a file. If true, output file is generated. Default: FALSE}
+
+\item{outfile}{string, name or path of output file name.}
 }
 \value{
 combined count matrix of all samples, log2 correlation plot and
@@ -58,9 +62,9 @@ DETAILS
 \examples{
 \dontrun{
 if(interactive()){
- dir = (".")
- pattern="_12.*_HTSeqCount.txt"
- metadata = system.file("exdata", "metadata.txt", package = "FungalTranscriptStability")
+ dir <- system.file(file.path('extdata'), package='FungalTranscriptStability')
+ pattern="_S.*_HTSeqCount.txt"
+ metadata <- system.file(file.path('extdata', 'metadata.txt'), package='FungalTranscriptStability')
  deseq_from_htseqcount(dir = dir, pattern = pattern, metadata_file = metadata_file, drop_genes = "CaglfM*", outfile = "ROS")
  }
 }
